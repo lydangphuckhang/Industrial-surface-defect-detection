@@ -1,7 +1,7 @@
 
 import cv2
 import numpy as np
-
+from pathlib import Path
 
 def load_image(image_path: str, as_gray: bool = False) -> np.ndarray:
     """Load an image from disk in RGB or grayscale format."""
@@ -102,3 +102,25 @@ def morphological_closing(image: np.ndarray,kernel_size: tuple = (3, 3)) -> np.n
 
     kernel = _get_kernel(kernel_size)
     return cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
+
+def resize_image(image: np.ndarray, size: int = 224) -> np.ndarray:
+    """Resize an image to (size, size)."""
+    if image is None:
+        raise ValueError("Input image cannot be None.")
+    if size <= 0:
+        raise ValueError("Size must be positive.")
+    return cv2.resize(image, (size, size), interpolation=cv2.INTER_AREA)
+
+
+def preprocess_image(image: np.ndarray, size: int = 224,blur: bool = False,blur_kernel: tuple = (3, 3)) -> np.ndarray:
+    """Single preprocessing pipeline shared by training and inference.
+
+    Input : RGB uint8 image (H, W, 3)
+    Output: RGB uint8 image (size, size, 3)
+    """
+    if image is None or image.ndim != 3:
+        raise ValueError("Input must be an RGB image with shape (H, W, 3).")
+
+    if blur:
+        image = gaussian_blur(image, blur_kernel)
+    return resize_image(image, size)

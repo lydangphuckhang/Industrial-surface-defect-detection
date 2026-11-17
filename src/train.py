@@ -56,8 +56,6 @@ def train_model():
     train_paths, train_labels = get_image_paths_and_labels(train_dir)
     val_paths, val_labels = get_image_paths_and_labels(test_dir)
 
-    print(f"    -> Found {len(train_paths)} training images.")
-    print(f"    -> Found {len(val_paths)} validation images.")
 
     if len(train_paths) == 0 or len(val_paths) == 0:
         raise ValueError(
